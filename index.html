@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>実技試験 練習ルーレット</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+  <style>
+    :root {
+      --color-background-primary: #ffffff;
+      --color-background-secondary: #f5f5f0;
+      --color-background-tertiary: #eeede8;
+      --color-text-primary: #1a1a18;
+      --color-text-secondary: #5f5e5a;
+      --color-text-tertiary: #9a9890;
+      --color-border-tertiary: rgba(0,0,0,0.12);
+      --color-border-secondary: rgba(0,0,0,0.22);
+      --color-border-primary: rgba(0,0,0,0.35);
+      --border-radius-md: 8px;
+      --border-radius-lg: 12px;
+      --font-sans: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --color-background-primary: #1c1c1a;
+        --color-background-secondary: #262624;
+        --color-background-tertiary: #2e2e2b;
+        --color-text-primary: #f0efe9;
+        --color-text-secondary: #a8a6a0;
+        --color-text-tertiary: #6a6864;
+        --color-border-tertiary: rgba(255,255,255,0.10);
+        --color-border-secondary: rgba(255,255,255,0.18);
+        --color-border-primary: rgba(255,255,255,0.28);
+      }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-background-tertiary);
+      color: var(--color-text-primary);
+      min-height: 100vh;
+    }
+    .app { max-width: 600px; margin: 0 auto; padding: 1.25rem 1rem 3rem; }
+    .page { display: none; }
+    .page.active { display: block; }
+    .hero { text-align: center; padding: 1.75rem 0 1.25rem; }
+    .hero-title { font-size: 21px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 5px; }
+    .hero-sub { font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; }
+    .sec-label { font-size: 10px; font-weight: 500; letter-spacing: .09em; text-transform: uppercase; color: var(--color-text-secondary); margin-bottom: 9px; }
+    .card { background: var(--color-background-primary); border: .5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 1rem; }
+    .primary-btn { width: 100%; padding: 14px; background: var(--color-background-primary); border: .5px solid var(--color-border-primary); border-radius: var(--border-radius-lg); font-size: 15px; font-weight: 500; color: var(--color-text-primary); cursor: pointer; transition: all .15s; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: var(--font-sans); }
+    .primary-btn:hover { background: var(--color-background-secondary); }
+    .primary-btn:active { transform: scale(.99); }
+    .primary-btn:disabled { opacity: .28; cursor: not-allowed; transform: none; }
+    .step-header { display: flex; align-items: center; gap: 10px; margin-bottom: 1.25rem; }
+    .back-btn { background: none; border: .5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); width: 34px; height: 34px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--color-text-secondary); flex-shrink: 0; transition: background .15s; }
+    .back-btn:hover { background: var(--color-background-secondary); }
+    .step-title { font-size: 16px; font-weight: 500; color: var(--color-text-primary); }
+    .step-sub { font-size: 12px; color: var(--color-text-tertiary); margin-top: 2px; }
+
+    /* モード選択 */
+    .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1rem; }
+    .mode-card { padding: 1.25rem 1rem; border-radius: var(--border-radius-lg); border: .5px solid var(--color-border-tertiary); background: var(--color-background-secondary); cursor: pointer; transition: all .18s; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+    .mode-card:hover { border-color: var(--color-border-primary); background: var(--color-background-primary); }
+    .mode-card.sel { background: #E6F1FB; border-color: #378ADD; }
+    .mode-icon { font-size: 26px; color: var(--color-text-secondary); }
+    .mode-card.sel .mode-icon { color: #185FA5; }
+    .mode-name { font-size: 14px; font-weight: 500; color: var(--color-text-secondary); }
+    .mode-card.sel .mode-name { color: #0C447C; }
+    .mode-desc { font-size: 11px; color: var(--color-text-tertiary); line-height: 1.5; }
+    .mode-card.sel .mode-desc { color: #185FA5; }
+
+    /* グループ選択 */
+    .bu-sec { margin-bottom: 12px; }
+    .bu-title { font-size: 12px; font-weight: 500; color: var(--color-text-secondary); margin-bottom: 7px; }
+    .group-btns { display: flex; flex-wrap: wrap; gap: 6px; }
+    .gbtn { padding: 6px 15px; border-radius: 100px; font-size: 13px; font-weight: 500; cursor: pointer; border: .5px solid var(--color-border-tertiary); background: var(--color-background-secondary); color: var(--color-text-secondary); transition: all .15s; user-select: none; font-family: var(--font-sans); }
+    .gbtn:hover { border-color: var(--color-border-primary); color: var(--color-text-primary); }
+    .gbtn.sel { background: #E6F1FB; border-color: #378ADD; color: #0C447C; }
+    .preview-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .chip { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 100px; font-size: 12px; border: .5px solid var(--color-border-tertiary); background: var(--color-background-secondary); color: var(--color-text-secondary); }
+    .chip-m { background: #E6F1FB; border-color: #B5D4F4; color: #185FA5; }
+    .chip-f { background: #FBEAF0; border-color: #F4C0D1; color: #993556; }
+
+    /* 自由入力 */
+    .free-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .free-count { font-size: 12px; color: var(--color-text-secondary); }
+    .free-count strong { font-weight: 500; color: var(--color-text-primary); }
+    .free-member-row { display: flex; align-items: center; gap: 8px; padding: 9px 10px; background: var(--color-background-secondary); border: .5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); margin-bottom: 6px; }
+    .free-row-num { font-size: 11px; color: var(--color-text-tertiary); min-width: 16px; text-align: center; flex-shrink: 0; }
+    .free-name-input { flex: 1; height: 34px; padding: 0 8px; border: .5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); background: var(--color-background-primary); font-size: 14px; color: var(--color-text-primary); outline: none; transition: border-color .15s; min-width: 0; font-family: var(--font-sans); }
+    .free-name-input:focus { border-color: var(--color-border-primary); }
+    .free-name-input::placeholder { color: var(--color-text-tertiary); }
+    .gender-toggle { display: flex; gap: 4px; flex-shrink: 0; }
+    .gtbtn { width: 32px; height: 32px; border-radius: var(--border-radius-md); border: .5px solid var(--color-border-tertiary); background: transparent; font-size: 12px; font-weight: 500; cursor: pointer; color: var(--color-text-secondary); transition: all .15s; display: flex; align-items: center; justify-content: center; font-family: var(--font-sans); }
+    .gtbtn:hover { border-color: var(--color-border-primary); }
+    .gtbtn.gm { background: #E6F1FB; border-color: #378ADD; color: #0C447C; }
+    .gtbtn.gf { background: #FBEAF0; border-color: #D4537E; color: #72243E; }
+    .del-btn { width: 28px; height: 28px; background: none; border: .5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--color-text-tertiary); transition: all .15s; flex-shrink: 0; }
+    .del-btn:hover { background: var(--color-background-secondary); color: var(--color-text-secondary); }
+    .del-btn:disabled { opacity: .3; cursor: not-allowed; }
+    .add-member-btn { width: 100%; padding: 9px; background: transparent; border: .5px dashed var(--color-border-secondary); border-radius: var(--border-radius-md); font-size: 13px; color: var(--color-text-secondary); cursor: pointer; transition: all .15s; display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 8px; font-family: var(--font-sans); }
+    .add-member-btn:hover { background: var(--color-background-secondary); border-style: solid; }
+    .min-notice { display: flex; align-items: center; gap: 6px; font-size: 12px; padding: 8px 10px; border-radius: var(--border-radius-md); margin-top: 8px; border: .5px solid; }
+    .min-notice.warn { color: #854F0B; background: #FAEEDA; border-color: #BA7517; }
+    .min-notice.good { color: #0F6E56; background: #E1F5EE; border-color: #1D9E75; }
+
+    /* PAGE2: 術者選択 */
+    .member-sel-item { display: flex; align-items: center; gap: 10px; padding: 11px 13px; border-radius: var(--border-radius-md); border: .5px solid var(--color-border-tertiary); background: var(--color-background-secondary); margin-bottom: 6px; cursor: pointer; transition: all .15s; user-select: none; }
+    .member-sel-item:last-child { margin-bottom: 0; }
+    .member-sel-item:hover { border-color: var(--color-border-primary); }
+    .member-sel-item.sel-op { background: #E6F1FB; border-color: #378ADD; }
+    .member-sel-item.absent { opacity: .35; cursor: default; }
+    .member-sel-item.absent:hover { border-color: var(--color-border-tertiary); }
+    .gdot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .gdot-m { background: #378ADD; } .gdot-f { background: #D4537E; } .gdot-n { background: #888; }
+    .mname { font-size: 14px; font-weight: 500; color: var(--color-text-primary); flex: 1; }
+    .member-sel-item.sel-op .mname { color: #0C447C; }
+    .role-tag { font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 100px; white-space: nowrap; border: .5px solid #B5D4F4; background: #E6F1FB; color: #185FA5; }
+    .absent-toggle { display: flex; align-items: center; gap: 5px; }
+    .absent-cb { width: 16px; height: 16px; cursor: pointer; accent-color: #aaa; flex-shrink: 0; }
+    .absent-lbl { font-size: 11px; color: var(--color-text-tertiary); }
+    .op-hint { font-size: 12px; color: var(--color-text-secondary); background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 9px 12px; margin-bottom: 10px; display: flex; align-items: flex-start; gap: 7px; line-height: 1.5; }
+
+    /* PAGE3: 患者役モード */
+    .patient-mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1rem; }
+    .pm-card { padding: 1.1rem 1rem; border-radius: var(--border-radius-lg); border: .5px solid var(--color-border-tertiary); background: var(--color-background-secondary); cursor: pointer; transition: all .18s; display: flex; flex-direction: column; align-items: center; gap: 7px; text-align: center; }
+    .pm-card:hover { border-color: var(--color-border-primary); background: var(--color-background-primary); }
+    .pm-card.sel-random { background: #EAF3DE; border-color: #639922; }
+    .pm-card.sel-male { background: #FAEEDA; border-color: #BA7517; }
+    .pm-icon { font-size: 22px; color: var(--color-text-secondary); }
+    .pm-card.sel-random .pm-icon { color: #3B6D11; }
+    .pm-card.sel-male .pm-icon { color: #854F0B; }
+    .pm-name { font-size: 13px; font-weight: 500; color: var(--color-text-secondary); }
+    .pm-card.sel-random .pm-name { color: #3B6D11; }
+    .pm-card.sel-male .pm-name { color: #633806; }
+    .pm-desc { font-size: 11px; color: var(--color-text-tertiary); line-height: 1.5; }
+    .pm-card.sel-random .pm-desc { color: #3B6D11; }
+    .pm-card.sel-male .pm-desc { color: #854F0B; }
+    .pm-note { font-size: 11px; color: var(--color-text-secondary); line-height: 1.6; padding: 8px 12px; background: var(--color-background-secondary); border-radius: var(--border-radius-md); }
+
+    /* PAGE4: 試験課題 */
+    .exam-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+    .exam-card { padding: 12px 13px; border-radius: var(--border-radius-md); border: .5px solid var(--color-border-tertiary); background: var(--color-background-secondary); cursor: pointer; transition: all .15s; display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+    .exam-card:hover { border-color: var(--color-border-primary); }
+    .exam-card.sel { background: #E6F1FB; border-color: #378ADD; }
+    .exam-card.rnd { grid-column: 1/-1; }
+    .exam-card.rnd.sel { background: #EAF3DE; border-color: #639922; }
+    .exam-name { font-size: 13px; font-weight: 500; color: var(--color-text-secondary); line-height: 1.4; }
+    .exam-card.sel .exam-name { color: #0C447C; }
+    .exam-card.rnd.sel .exam-name { color: #3B6D11; }
+    .patient-mode-bar { display: flex; align-items: center; justify-content: space-between; padding: 9px 12px; border-radius: var(--border-radius-md); border: .5px solid var(--color-border-tertiary); background: var(--color-background-secondary); margin-top: 10px; }
+    .pmb-label { font-size: 12px; color: var(--color-text-secondary); }
+    .pmb-value { font-size: 12px; font-weight: 500; padding: 3px 10px; border-radius: 100px; }
+    .pmb-random { background: #EAF3DE; color: #3B6D11; border: .5px solid #639922; }
+    .pmb-male { background: #FAEEDA; color: #633806; border: .5px solid #BA7517; }
+    .pmb-change { font-size: 11px; color: var(--color-text-tertiary); cursor: pointer; text-decoration: underline; text-underline-offset: 2px; background: none; border: none; cursor: pointer; font-family: var(--font-sans); }
+    .pmb-change:hover { color: var(--color-text-secondary); }
+
+    /* PAGE5: ルーレット＋結果 */
+    .roulette-box { background: var(--color-background-secondary); border: .5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.75rem 1.25rem; text-align: center; margin-bottom: 1rem; }
+    .rl-lbl { font-size: 10px; font-weight: 500; letter-spacing: .09em; text-transform: uppercase; color: var(--color-text-secondary); margin-bottom: .6rem; }
+    .rl-text { font-size: 23px; font-weight: 500; min-height: 36px; letter-spacing: -.02em; color: var(--color-text-tertiary); transition: color .08s; }
+    .rl-text.spin { color: #378ADD; }
+    .rl-text.done { color: var(--color-text-primary); }
+    .spin-btn { width: 100%; padding: 14px; background: var(--color-background-primary); border: .5px solid var(--color-border-primary); border-radius: var(--border-radius-lg); font-size: 15px; font-weight: 500; color: var(--color-text-primary); cursor: pointer; transition: all .15s; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 1rem; font-family: var(--font-sans); }
+    .spin-btn:hover { background: var(--color-background-secondary); }
+    .spin-btn:active { transform: scale(.98); }
+    .spin-btn:disabled { opacity: .28; cursor: not-allowed; transform: none; }
+    .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+    .role-card { padding: 13px 10px; border-radius: var(--border-radius-md); border: .5px solid var(--color-border-tertiary); text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; background: var(--color-background-secondary); transition: all .3s; min-height: 76px; }
+    .role-card.ro { background: #F1EFE8; border-color: #888780; }
+    .role-card.rp { background: #FAECE7; border-color: #D85A30; }
+    .role-card.ra1 { background: #E1F5EE; border-color: #1D9E75; }
+    .role-card.ra2 { background: #E6F1FB; border-color: #378ADD; }
+    .rl { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: .07em; color: var(--color-text-tertiary); }
+    .role-card.ro .rl { color: #5F5E5A; }
+    .role-card.rp .rl { color: #993C1D; }
+    .role-card.ra1 .rl { color: #0F6E56; }
+    .role-card.ra2 .rl { color: #185FA5; }
+    .rn { font-size: 14px; font-weight: 500; }
+    .role-card.ro .rn { color: #2C2C2A; }
+    .role-card.rp .rn { color: #711f0f; }
+    .role-card.ra1 .rn { color: #085041; }
+    .role-card.ra2 .rn { color: #0C447C; }
+    .r-empty { font-size: 13px; color: var(--color-text-tertiary); }
+    .standby-row { display: none; align-items: center; gap: 8px; padding: 8px 12px; background: var(--color-background-secondary); border-radius: var(--border-radius-md); margin-bottom: 8px; }
+    .sb-lbl { font-size: 10px; font-weight: 500; letter-spacing: .07em; text-transform: uppercase; color: var(--color-text-tertiary); white-space: nowrap; }
+    .sb-names { font-size: 13px; color: var(--color-text-secondary); }
+    .action-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 7px; margin-top: 4px; }
+    .act-btn { padding: 11px 6px; border: .5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); font-size: 12px; color: var(--color-text-secondary); background: transparent; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; transition: background .15s; line-height: 1.2; text-align: center; font-family: var(--font-sans); }
+    .act-btn i { font-size: 16px; }
+    .act-btn:hover { background: var(--color-background-secondary); }
+
+    /* タイマー */
+    .timer-card { display: none; }
+    .timer-card.visible { display: block; }
+    .timer-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+    .timer-title { font-size: 10px; font-weight: 500; letter-spacing: .09em; text-transform: uppercase; color: var(--color-text-secondary); }
+    .timer-ring-wrap { position: relative; width: 160px; height: 160px; margin: 0 auto .75rem; }
+    .timer-ring-wrap svg { position: absolute; top: 0; left: 0; transform: rotate(-90deg); }
+    .timer-ring-bg { fill: none; stroke: var(--color-border-tertiary); stroke-width: 6; }
+    .timer-ring-fg { fill: none; stroke: #1D9E75; stroke-width: 6; stroke-linecap: round; transition: stroke-dashoffset .5s linear, stroke .3s; }
+    .timer-ring-center { position: absolute; top: 0; left: 0; width: 160px; height: 160px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
+    .timer-big { font-size: 36px; font-weight: 500; letter-spacing: -.03em; font-variant-numeric: tabular-nums; color: var(--color-text-primary); line-height: 1; transition: color .3s; }
+    .timer-big.warn { color: #BA7517; }
+    .timer-big.danger { color: #E24B4A; }
+    .timer-small { font-size: 12px; color: var(--color-text-secondary); }
+    .timer-btns { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+    .timer-btn { padding: 11px 6px; border: .5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); font-size: 12px; font-weight: 500; color: var(--color-text-secondary); background: transparent; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; transition: all .15s; line-height: 1.2; font-family: var(--font-sans); }
+    .timer-btn i { font-size: 18px; }
+    .timer-btn:hover { background: var(--color-background-secondary); }
+    .timer-btn.t-start { background: #EAF3DE; border-color: #639922; color: #3B6D11; }
+    .timer-btn.t-start:hover { background: #C0DD97; }
+    .timer-btn.t-pause { background: #FAEEDA; border-color: #BA7517; color: #633806; }
+    .timer-btn.t-pause:hover { background: #FAC775; }
+    .timer-btn.t-stop { background: #FCEBEB; border-color: #E24B4A; color: #791F1F; }
+    .timer-btn.t-stop:hover { background: #F7C1C1; }
+    .lap-list { margin-top: 10px; display: none; }
+    .lap-item { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: .5px solid var(--color-border-tertiary); font-size: 12px; color: var(--color-text-secondary); }
+    .lap-item:last-child { border-bottom: none; }
+    .lap-num { color: var(--color-text-tertiary); }
+    .lap-time { font-variant-numeric: tabular-nums; font-weight: 500; color: var(--color-text-primary); }
+    .lap-split { color: var(--color-text-tertiary); font-size: 11px; }
+    .timer-fin { display: none; text-align: center; padding: .5rem 0; font-size: 13px; font-weight: 500; color: #E24B4A; }
+    .timer-fin.show { display: block; }
+  </style>
+</head>
+<body>
+<div class="app">
+
+<!-- PAGE 1 -->
+<div class="page active" id="page-1">
+  <div class="hero">
+    <div class="hero-title">実技試験 練習ルーレット</div>
+    <div class="hero-sub">グループから読み込むか、自由にメンバーを入力して始めよう</div>
+  </div>
+  <div class="mode-grid">
+    <div class="mode-card sel" id="mode-group" onclick="setMode('group')">
+      <i class="ti ti-users mode-icon"></i>
+      <span class="mode-name">グループから選ぶ</span>
+      <span class="mode-desc">班のメンバーを<br>自動で読み込む</span>
+    </div>
+    <div class="mode-card" id="mode-free" onclick="setMode('free')">
+      <i class="ti ti-pencil mode-icon"></i>
+      <span class="mode-name">自由に入力する</span>
+      <span class="mode-desc">名前と性別を<br>その場で入力する</span>
+    </div>
+  </div>
+  <div id="panel-group">
+    <div class="card">
+      <div class="bu-sec"><div class="bu-title">午前部 1組</div><div class="group-btns" id="grp-am1"></div></div>
+      <div class="bu-sec"><div class="bu-title">午前部 2組</div><div class="group-btns" id="grp-am2"></div></div>
+      <div class="bu-sec" style="margin-bottom:0"><div class="bu-title">午後部</div><div class="group-btns" id="grp-pm"></div></div>
+    </div>
+    <div class="card" id="preview-card" style="display:none">
+      <div class="sec-label">メンバー <span id="preview-lbl" style="font-weight:400;text-transform:none;letter-spacing:0;font-size:12px"></span></div>
+      <div class="preview-chips" id="preview-chips"></div>
+    </div>
+  </div>
+  <div id="panel-free" style="display:none">
+    <div class="card">
+      <div class="free-header">
+        <div class="sec-label" style="margin-bottom:0">メンバーを入力</div>
+        <div class="free-count" id="free-count"></div>
+      </div>
+      <div id="free-member-list"></div>
+      <button class="add-member-btn" onclick="addFreeMember()"><i class="ti ti-plus"></i> メンバーを追加</button>
+      <div class="min-notice warn" id="free-notice">
+        <i class="ti ti-info-circle"></i>
+        <span id="free-notice-text">術者・患者・助手1・助手2の最低4名必要です</span>
+      </div>
+    </div>
+  </div>
+  <button class="primary-btn" id="next-1" onclick="goTo(2)" disabled>
+    <i class="ti ti-arrow-right"></i><span id="next1-label">このグループで始める</span>
+  </button>
+</div>
+
+<!-- PAGE 2 -->
+<div class="page" id="page-2">
+  <div class="step-header">
+    <button class="back-btn" onclick="goTo(1)"><i class="ti ti-arrow-left"></i></button>
+    <div><div class="step-title">術者を選ぶ</div><div class="step-sub" id="p2-sub"></div></div>
+  </div>
+  <div class="card">
+    <div class="op-hint"><i class="ti ti-info-circle" style="font-size:15px;flex-shrink:0;margin-top:1px"></i>アプリを操作している人（術者）をタップ。欠席者は「出席」のチェックを外してください。</div>
+    <div id="member-list"></div>
+  </div>
+  <button class="primary-btn" id="next-2" onclick="goTo(3)" disabled>
+    <i class="ti ti-arrow-right"></i> 患者役の決め方を選ぶ
+  </button>
+</div>
+
+<!-- PAGE 3 -->
+<div class="page" id="page-3">
+  <div class="step-header">
+    <button class="back-btn" onclick="goTo(2)"><i class="ti ti-arrow-left"></i></button>
+    <div><div class="step-title">患者役の決め方</div><div class="step-sub" id="p3-sub"></div></div>
+  </div>
+  <div class="card">
+    <div class="sec-label" style="margin-bottom:12px">患者役をどのように決めますか？</div>
+    <div class="patient-mode-grid">
+      <div class="pm-card" id="pm-random" onclick="selectPatientMode('random')">
+        <i class="ti ti-arrows-shuffle pm-icon"></i>
+        <span class="pm-name">完全ランダム</span>
+        <span class="pm-desc">性別に関係なく<br>ランダムに決定</span>
+      </div>
+      <div class="pm-card" id="pm-male" onclick="selectPatientMode('male')">
+        <i class="ti ti-user pm-icon"></i>
+        <span class="pm-name">男性優先</span>
+        <span class="pm-desc">患者役を<br>男性から選ぶ</span>
+      </div>
+    </div>
+    <div class="pm-note">
+      <i class="ti ti-info-circle" style="font-size:13px;vertical-align:-2px"></i>
+      　男性優先モードは試験課題に関わらず常に適用されます。試験課題ごとに切り替えたい場合は、都度この画面で変更してください。
+    </div>
+  </div>
+  <button class="primary-btn" id="next-3" onclick="goTo(4)" disabled>
+    <i class="ti ti-arrow-right"></i> 試験課題を選ぶ
+  </button>
+</div>
+
+<!-- PAGE 4 -->
+<div class="page" id="page-4">
+  <div class="step-header">
+    <button class="back-btn" onclick="goTo(3)"><i class="ti ti-arrow-left"></i></button>
+    <div><div class="step-title">試験課題を選ぶ</div><div class="step-sub" id="p4-sub"></div></div>
+  </div>
+  <div class="card">
+    <div class="exam-grid" id="exam-grid"></div>
+    <div class="patient-mode-bar">
+      <span class="pmb-label">患者役の決め方</span>
+      <span class="pmb-value" id="pmbar-value"></span>
+      <button class="pmb-change" onclick="goTo(3)">変更</button>
+    </div>
+  </div>
+  <button class="primary-btn" id="next-4" onclick="goTo(5)" disabled>
+    <i class="ti ti-player-play"></i> 抽選する
+  </button>
+</div>
+
+<!-- PAGE 5 -->
+<div class="page" id="page-5">
+  <div class="step-header">
+    <button class="back-btn" onclick="goBackP5()"><i class="ti ti-arrow-left"></i></button>
+    <div><div class="step-title" id="p5-title">抽選</div><div class="step-sub" id="p5-sub"></div></div>
+  </div>
+  <div class="card">
+    <div class="roulette-box">
+      <div class="rl-lbl">試験課題</div>
+      <div class="rl-text" id="rl-text">—</div>
+    </div>
+    <button class="spin-btn" id="spin-btn" onclick="doSpin()">
+      <i class="ti ti-player-play"></i> 抽選開始
+    </button>
+    <div class="sec-label" id="roles-label" style="display:none">役割割り当て</div>
+    <div class="role-grid" id="role-grid" style="display:none">
+      <div class="role-card" id="rc-o"><span class="rl">術者</span><span class="r-empty">—</span></div>
+      <div class="role-card" id="rc-p"><span class="rl">患者</span><span class="r-empty">—</span></div>
+      <div class="role-card" id="rc-a1"><span class="rl">助手1</span><span class="r-empty">—</span></div>
+      <div class="role-card" id="rc-a2"><span class="rl">助手2</span><span class="r-empty">—</span></div>
+    </div>
+    <div class="standby-row" id="standby-row">
+      <span class="sb-lbl">待機</span>
+      <span class="sb-names" id="standby-names"></span>
+    </div>
+    <div class="action-row" id="action-row" style="display:none">
+      <button class="act-btn" onclick="doSpin()"><i class="ti ti-refresh"></i>もう一度</button>
+      <button class="act-btn" onclick="goTo(4)"><i class="ti ti-edit"></i>課題を変える</button>
+      <button class="act-btn" onclick="goTo(2)"><i class="ti ti-users"></i>術者を変える</button>
+    </div>
+  </div>
+  <div class="card timer-card" id="timer-card">
+    <div class="timer-top">
+      <span class="timer-title">タイマー</span>
+      <span style="font-size:11px;color:var(--color-text-tertiary)">5:00</span>
+    </div>
+    <div class="timer-ring-wrap">
+      <svg width="160" height="160" viewBox="0 0 160 160">
+        <circle class="timer-ring-bg" cx="80" cy="80" r="70"/>
+        <circle class="timer-ring-fg" id="ring-fg" cx="80" cy="80" r="70" stroke-dasharray="439.82" stroke-dashoffset="0"/>
+      </svg>
+      <div class="timer-ring-center">
+        <div class="timer-big" id="timer-big">5:00</div>
+        <div class="timer-small" id="timer-small">残り時間</div>
+      </div>
+    </div>
+    <div class="timer-btns">
+      <button class="timer-btn" id="btn-lap" onclick="doLap()" disabled><i class="ti ti-flag"></i>ラップ</button>
+      <button class="timer-btn t-start" id="btn-start" onclick="toggleTimer()"><i class="ti ti-player-play"></i>スタート</button>
+      <button class="timer-btn t-stop" onclick="resetTimer()"><i class="ti ti-square"></i>リセット</button>
+    </div>
+    <div class="timer-fin" id="timer-fin"><i class="ti ti-alarm"></i> 時間です！</div>
+    <div class="lap-list" id="lap-list">
+      <div class="sec-label" style="margin-top:12px;margin-bottom:6px">ラップ</div>
+      <div id="lap-items"></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /.app -->
+
+<script>
+const DB={
+  '午前部':{1:{
+    1:[{n:'坂井 大樹',g:'男'},{n:'廣瀬 遥香',g:'女'},{n:'三木 彪我',g:'男'},{n:'野沢 柚果',g:'女'}],
+    2:[{n:'井川 泰成',g:'男'},{n:'石井 日悠',g:'男'},{n:'原田 愛望',g:'女'},{n:'渡部 禄也',g:'男'}],
+    3:[{n:'井上 暁人',g:'男'},{n:'新保 慶次郎',g:'男'},{n:'初澤 瑠美',g:'女'},{n:'益子 類',g:'男'}],
+    4:[{n:'市原 玲良',g:'男'},{n:'小山 美月',g:'女'},{n:'松本 綺人',g:'男'},{n:'山﨑 瑠唯',g:'男'}],
+    5:[{n:'飯島 捺妃',g:'女'},{n:'伊鍔 結',g:'女'},{n:'金子 雄斗',g:'男'},{n:'田丸 晴樹',g:'男'},{n:'渡邉 颯士',g:'男'}]
+  },2:{
+    1:[{n:'石本 そう',g:'男'},{n:'関上 颯太',g:'男'},{n:'髙橋 莉未子',g:'女'},{n:'平山 史佳',g:'女'}],
+    2:[{n:'市川 陽子',g:'女'},{n:'金原 怜司',g:'男'},{n:'鈴木 蓮也',g:'男'},{n:'竹内 想奈',g:'女'}],
+    3:[{n:'佐藤 ちはる',g:'女'},{n:'西川 立翼',g:'男'},{n:'樋口 なつ希',g:'女'},{n:'三浦 翔',g:'男'}],
+    4:[{n:'大川 穂花',g:'女'},{n:'河島 俊一',g:'男'},{n:'富永 虹',g:'男'},{n:'松﨑 桜和',g:'女'},{n:'森 天花',g:'女'}]
+  }},
+  '午後部':{'午後':{
+    1:[{n:'内田 凜海',g:'男'},{n:'綱 慧音',g:'男'},{n:'松本 悠菜',g:'女'}],
+    2:[{n:'青柳 彩楽',g:'女'},{n:'米須 鉄生',g:'男'},{n:'佐藤 克己',g:'男'}]
+  }}
+};
+const EXAMS=[
+  {name:'第5中手骨頸部骨折固定'},{name:'肋骨骨折固定'},{name:'下腿骨骨幹部骨折固定'},
+  {name:'コーレス骨折固定'},{name:'上腕骨骨幹部骨折'},{name:'鎖骨骨折固定'},
+  {name:'おまかせ（ランダム）',rnd:true},
+];
+const MIN=4;
+let inputMode='group',curGroup=null,members=[],operatorIdx=null;
+let patientMode=null,selExam=null,isSpinning=false;
+let freeMembers=[],freeId=0;
+
+function goTo(n){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+n).classList.add('active');
+  window.scrollTo(0,0);
+  if(n===2)setupMembers();
+  if(n===3)initP3();
+  if(n===4)initP4();
+  if(n===5)initP5();
+}
+function goBackP5(){resetTimer();goTo(4);}
+
+function setMode(m){
+  inputMode=m;
+  document.getElementById('mode-group').className='mode-card'+(m==='group'?' sel':'');
+  document.getElementById('mode-free').className='mode-card'+(m==='free'?' sel':'');
+  document.getElementById('panel-group').style.display=m==='group'?'block':'none';
+  document.getElementById('panel-free').style.display=m==='free'?'block':'none';
+  document.getElementById('next1-label').textContent=m==='group'?'このグループで始める':'メンバーを確定する';
+  if(m==='free'){
+    if(freeMembers.length===0)for(let i=0;i<MIN;i++)pushFree();
+    renderFreeList();updateFreeState();
+  }else{
+    document.getElementById('next-1').disabled=curGroup===null;
+  }
+}
+function initGroupBtns(){
+  [{id:'grp-am1',bu:'午前部',kumi:1,groups:[1,2,3,4,5]},
+   {id:'grp-am2',bu:'午前部',kumi:2,groups:[1,2,3,4]},
+   {id:'grp-pm', bu:'午後部',kumi:'午後',groups:[1,2]}
+  ].forEach(({id,bu,kumi,groups})=>{
+    const el=document.getElementById(id);
+    groups.forEach(g=>{
+      const b=document.createElement('button');
+      b.className='gbtn';b.textContent=`班${g}`;
+      b.onclick=()=>selectGroup(bu,kumi,g,b);
+      el.appendChild(b);
+    });
+  });
+}
+function selectGroup(bu,kumi,grp,btn){
+  document.querySelectorAll('.gbtn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  curGroup={bu,kumi,grp};
+  const raw=DB[bu][kumi][grp];
+  const kl=kumi==='午後'?'':`${kumi}組 `;
+  document.getElementById('preview-lbl').textContent=`— ${bu} ${kl}班${grp}`;
+  const chips=document.getElementById('preview-chips');
+  chips.innerHTML='';
+  raw.forEach(s=>{const c=document.createElement('span');c.className='chip '+(s.g==='男'?'chip-m':'chip-f');c.textContent=s.n;chips.appendChild(c);});
+  document.getElementById('preview-card').style.display='block';
+  document.getElementById('next-1').disabled=false;
+}
+function pushFree(){freeMembers.push({id:freeId++,name:'',gender:''});}
+function addFreeMember(){pushFree();renderFreeList();updateFreeState();}
+function removeFree(id){
+  if(freeMembers.length<=MIN)return;
+  freeMembers=freeMembers.filter(m=>m.id!==id);
+  renderFreeList();updateFreeState();
+}
+function setFreeName(id,val){const m=freeMembers.find(m=>m.id===id);if(m){m.name=val;updateFreeState();}}
+function setFreeGender(id,g){const m=freeMembers.find(m=>m.id===id);if(!m)return;m.gender=(m.gender===g)?'':g;renderFreeList();updateFreeState();}
+function validFree(){return freeMembers.filter(m=>m.name.trim()&&m.gender);}
+function renderFreeList(){
+  const list=document.getElementById('free-member-list');list.innerHTML='';
+  freeMembers.forEach((m,i)=>{
+    const row=document.createElement('div');row.className='free-member-row';
+    row.innerHTML=`<span class="free-row-num">${i+1}</span>
+      <input class="free-name-input" type="text" placeholder="名前" value="${m.name}" oninput="setFreeName(${m.id},this.value)">
+      <div class="gender-toggle">
+        <button class="gtbtn ${m.gender==='男'?'gm':''}" onclick="setFreeGender(${m.id},'男')">男</button>
+        <button class="gtbtn ${m.gender==='女'?'gf':''}" onclick="setFreeGender(${m.id},'女')">女</button>
+      </div>
+      <button class="del-btn" onclick="removeFree(${m.id})" ${freeMembers.length<=MIN?'disabled':''}>
+        <i class="ti ti-x" style="font-size:13px"></i>
+      </button>`;
+    list.appendChild(row);
+  });
+}
+function updateFreeState(){
+  const v=validFree(),t=freeMembers.length,ok=v.length>=MIN;
+  document.getElementById('free-count').innerHTML=`<strong>${v.length}</strong> / ${t}名 入力済み`;
+  const n=document.getElementById('free-notice'),nt=document.getElementById('free-notice-text');
+  if(ok){n.className='min-notice good';nt.textContent=`${v.length}名で抽選できます`;}
+  else{n.className='min-notice warn';nt.textContent=`あと${MIN-v.length}名（名前＋性別）入力してください（最低${MIN}名）`;}
+  document.getElementById('next-1').disabled=!ok;
+}
+function setupMembers(){
+  operatorIdx=null;
+  if(inputMode==='group'){
+    const {bu,kumi,grp}=curGroup;const kl=kumi==='午後'?'':`${kumi}組 `;
+    members=DB[bu][kumi][grp].map((s,i)=>({name:s.n,gender:s.g,absent:false,idx:i}));
+    document.getElementById('p2-sub').textContent=`${bu} ${kl}班${grp}`;
+  }else{
+    const v=validFree();
+    members=v.map((m,i)=>({name:m.name.trim(),gender:m.gender,absent:false,idx:i}));
+    document.getElementById('p2-sub').textContent=`自由入力 — ${members.length}名`;
+  }
+  renderMemberList();
+}
+function renderMemberList(){
+  const list=document.getElementById('member-list');list.innerHTML='';
+  members.forEach((s,i)=>{
+    const row=document.createElement('div');
+    row.className='member-sel-item'+(s.absent?' absent':'');row.id=`msi-${i}`;
+    row.innerHTML=`<span class="gdot ${s.gender==='男'?'gdot-m':s.gender==='女'?'gdot-f':'gdot-n'}"></span>
+      <span class="mname">${s.name}</span>
+      <label class="absent-toggle" onclick="event.stopPropagation()">
+        <input type="checkbox" class="absent-cb" ${s.absent?'':'checked'} onchange="toggleAbsent(${i},!this.checked)">
+        <span class="absent-lbl">出席</span>
+      </label>`;
+    if(!s.absent)row.onclick=()=>selectOperator(i);
+    list.appendChild(row);
+  });
+  document.getElementById('next-2').disabled=true;
+}
+function selectOperator(i){
+  if(members[i].absent)return;
+  operatorIdx=i;
+  members.forEach((_,idx)=>{
+    const r=document.getElementById(`msi-${idx}`);if(!r)return;
+    r.classList.remove('sel-op');const t=r.querySelector('.role-tag');if(t)t.remove();
+  });
+  const row=document.getElementById(`msi-${i}`);row.classList.add('sel-op');
+  const tag=document.createElement('span');tag.className='role-tag';tag.textContent='術者';
+  row.insertBefore(tag,row.querySelector('.absent-toggle'));
+  document.getElementById('next-2').disabled=false;
+}
+function toggleAbsent(i,absent){
+  members[i].absent=absent;
+  if(operatorIdx===i&&absent){operatorIdx=null;document.getElementById('next-2').disabled=true;}
+  renderMemberList();
+  if(operatorIdx!==null&&!members[operatorIdx].absent)selectOperator(operatorIdx);
+}
+function initP3(){
+  document.getElementById('p3-sub').textContent=`術者：${members[operatorIdx].name}`;
+  renderPatientModeCards();
+  document.getElementById('next-3').disabled=patientMode===null;
+}
+function selectPatientMode(m){
+  patientMode=m;renderPatientModeCards();
+  document.getElementById('next-3').disabled=false;
+}
+function renderPatientModeCards(){
+  document.getElementById('pm-random').className='pm-card'+(patientMode==='random'?' sel-random':'');
+  document.getElementById('pm-male').className='pm-card'+(patientMode==='male'?' sel-male':'');
+}
+function initP4(){
+  selExam=null;
+  document.getElementById('p4-sub').textContent=`術者：${members[operatorIdx].name}`;
+  const bar=document.getElementById('pmbar-value');
+  if(patientMode==='male'){bar.className='pmb-value pmb-male';bar.textContent='男性優先';}
+  else{bar.className='pmb-value pmb-random';bar.textContent='完全ランダム';}
+  const grid=document.getElementById('exam-grid');grid.innerHTML='';
+  EXAMS.forEach((e,i)=>{
+    const isR=!!e.rnd;
+    const card=document.createElement('div');card.className='exam-card'+(isR?' rnd':'');
+    card.innerHTML=`<span class="exam-name">${e.name}</span>${isR?'<i class="ti ti-dice" style="font-size:14px;color:var(--color-text-tertiary);opacity:.5;flex-shrink:0"></i>':''}`;
+    card.onclick=()=>selectExam(i);
+    grid.appendChild(card);
+  });
+  document.getElementById('next-4').disabled=true;
+}
+function selectExam(i){
+  selExam=i;
+  document.querySelectorAll('.exam-card').forEach((c,idx)=>{
+    const e=EXAMS[idx];c.className='exam-card'+(e.rnd?' rnd':'')+(idx===i?' sel'+(e.rnd?' rnd':''):'');
+  });
+  document.getElementById('next-4').disabled=false;
+}
+function initP5(){
+  isSpinning=false;resetTimer();
+  const op=members[operatorIdx];
+  document.getElementById('p5-title').textContent='抽選';
+  document.getElementById('p5-sub').textContent=`術者：${op.name} ／ ${patientMode==='male'?'患者：男性優先':'患者：完全ランダム'}`;
+  document.getElementById('rl-text').textContent='—';document.getElementById('rl-text').className='rl-text';
+  document.getElementById('role-grid').style.display='none';document.getElementById('roles-label').style.display='none';
+  document.getElementById('standby-row').style.display='none';document.getElementById('action-row').style.display='none';
+  document.getElementById('timer-card').classList.remove('visible');
+  const sb=document.getElementById('spin-btn');sb.disabled=false;sb.innerHTML='<i class="ti ti-player-play"></i> 抽選開始';
+  setCard('o',null);setCard('p',null);setCard('a1',null);setCard('a2',null);setCard('o',op,'術者');
+}
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+async function doSpin(){
+  if(isSpinning)return;
+  isSpinning=true;resetTimer();
+  document.getElementById('timer-card').classList.remove('visible');
+  const sb=document.getElementById('spin-btn');sb.disabled=true;
+  document.getElementById('action-row').style.display='none';document.getElementById('role-grid').style.display='none';
+  document.getElementById('roles-label').style.display='none';document.getElementById('standby-row').style.display='none';
+  setCard('p',null);setCard('a1',null);setCard('a2',null);setCard('o',members[operatorIdx],'術者');
+  const exam=EXAMS[selExam];
+  const pool=EXAMS.filter(e=>!e.rnd);
+  const final=exam.rnd?pool[Math.floor(Math.random()*pool.length)]:exam;
+  const disp=document.getElementById('rl-text');
+  const names=EXAMS.filter(e=>!e.rnd).map(e=>e.name);
+  const total=22+Math.floor(Math.random()*10);let delay=50;
+  disp.className='rl-text spin';
+  for(let i=0;i<total;i++){
+    disp.textContent=names[i%names.length];
+    const p=i/total;if(p>.8)delay*=1.16;else if(p>.6)delay*=1.07;
+    await sleep(Math.round(delay));
+  }
+  disp.textContent=final.name;disp.className='rl-text done';
+  document.getElementById('p5-title').textContent=final.name;
+  await sleep(500);
+  const others=members.filter(s=>!s.absent&&s.idx!==operatorIdx);
+  assignRoles(members[operatorIdx],others);isSpinning=false;
+}
+function assignRoles(op,others){
+  let patient,a1,a2,standby=[];
+  if(patientMode==='male'){
+    const males=shuffle(others.filter(s=>s.gender==='男'));
+    const females=shuffle(others.filter(s=>s.gender==='女'));
+    if(males.length>0){patient=males[0];const rest=shuffle([...males.slice(1),...females]);a1=rest[0];a2=rest[1];standby=rest.slice(2);}
+    else{const sp=shuffle(others);patient=sp[0];a1=sp[1];a2=sp[2];standby=sp.slice(3);}
+  }else{const sp=shuffle(others);patient=sp[0];a1=sp[1];a2=sp[2];standby=sp.slice(3);}
+  document.getElementById('roles-label').style.display='block';document.getElementById('role-grid').style.display='grid';
+  setCard('o',op,'術者');
+  setTimeout(()=>setCard('p',patient,'患者'),80);
+  setTimeout(()=>setCard('a1',a1,'助手1'),260);
+  setTimeout(()=>setCard('a2',a2,'助手2'),440);
+  if(standby.length>0)setTimeout(()=>{document.getElementById('standby-row').style.display='flex';document.getElementById('standby-names').textContent=standby.map(s=>s.name).join('、');},560);
+  setTimeout(()=>{
+    document.getElementById('action-row').style.display='grid';
+    const sb=document.getElementById('spin-btn');sb.disabled=false;sb.innerHTML='<i class="ti ti-refresh"></i> もう一度';
+    document.getElementById('timer-card').classList.add('visible');
+  },650);
+}
+function setCard(id,student,role){
+  const card=document.getElementById('rc-'+id);
+  const cls={o:'ro',p:'rp',a1:'ra1',a2:'ra2'};const lbl={o:'術者',p:'患者',a1:'助手1',a2:'助手2'};
+  if(student){card.className='role-card '+cls[id];card.innerHTML=`<span class="rl">${role}</span><span class="rn">${student.name}</span>`;}
+  else{card.className='role-card';card.innerHTML=`<span class="rl">${lbl[id]}</span><span class="r-empty">—</span>`;}
+}
+const TOTAL=5*60*1000,CIRC=439.82;
+let tRunning=false,tStart=null,tElapsed=0,tRaf=null,laps=[],lastLap=0;
+function fmt(ms){const t=Math.max(0,Math.floor(ms/1000));return`${Math.floor(t/60)}:${String(t%60).padStart(2,'0')}`;}
+function fmtP(ms){const t=Math.max(0,Math.floor(ms/100));return`${Math.floor(t/600)}:${String(Math.floor((t%600)/10)).padStart(2,'0')}.${t%10}`;}
+function updateRing(e){
+  const rem=Math.max(0,TOTAL-e),r=rem/TOTAL;
+  document.getElementById('ring-fg').style.strokeDashoffset=CIRC*(1-r);
+  document.getElementById('ring-fg').style.stroke=r<=.2?'#E24B4A':r<=.4?'#BA7517':'#1D9E75';
+  const big=document.getElementById('timer-big');big.textContent=fmt(rem);big.className='timer-big'+(r<=.2?' danger':r<=.4?' warn':'');
+}
+function tick(){
+  const e=tElapsed+(Date.now()-tStart);updateRing(e);
+  if(e>=TOTAL){
+    tElapsed=TOTAL;tRunning=false;if(tRaf)cancelAnimationFrame(tRaf);tRaf=null;updateRing(TOTAL);
+    document.getElementById('timer-fin').classList.add('show');document.getElementById('timer-small').textContent='終了';
+    document.getElementById('btn-start').className='timer-btn t-start';document.getElementById('btn-start').innerHTML='<i class="ti ti-player-play"></i>スタート';
+    document.getElementById('btn-start').disabled=true;document.getElementById('btn-lap').disabled=true;return;
+  }
+  tRaf=requestAnimationFrame(tick);
+}
+function toggleTimer(){
+  if(tRunning){
+    tElapsed+=Date.now()-tStart;tRunning=false;if(tRaf)cancelAnimationFrame(tRaf);tRaf=null;
+    document.getElementById('btn-start').className='timer-btn t-start';document.getElementById('btn-start').innerHTML='<i class="ti ti-player-play"></i>再開';
+    document.getElementById('timer-small').textContent='一時停止中';document.getElementById('btn-lap').disabled=true;
+  }else{
+    document.getElementById('timer-fin').classList.remove('show');document.getElementById('btn-start').disabled=false;
+    tStart=Date.now();tRunning=true;
+    document.getElementById('btn-start').className='timer-btn t-pause';document.getElementById('btn-start').innerHTML='<i class="ti ti-player-pause"></i>一時停止';
+    document.getElementById('timer-small').textContent='残り時間';document.getElementById('btn-lap').disabled=false;
+    tRaf=requestAnimationFrame(tick);
+  }
+}
+function doLap(){
+  const e=tRunning?(tElapsed+(Date.now()-tStart)):tElapsed;
+  laps.push({total:e,split:e-lastLap});lastLap=e;
+  const items=document.getElementById('lap-items');
+  const d=document.createElement('div');d.className='lap-item';
+  d.innerHTML=`<span class="lap-num">Lap ${laps.length}</span><span class="lap-time">${fmtP(e)}</span><span class="lap-split">+${fmtP(laps[laps.length-1].split)}</span>`;
+  items.appendChild(d);document.getElementById('lap-list').style.display='block';
+}
+function resetTimer(){
+  if(tRaf)cancelAnimationFrame(tRaf);tRaf=null;tRunning=false;tStart=null;tElapsed=0;laps=[];lastLap=0;
+  updateRing(0);document.getElementById('timer-big').textContent='5:00';document.getElementById('timer-big').className='timer-big';
+  document.getElementById('timer-small').textContent='残り時間';document.getElementById('timer-fin').classList.remove('show');
+  document.getElementById('btn-start').className='timer-btn t-start';document.getElementById('btn-start').innerHTML='<i class="ti ti-player-play"></i>スタート';
+  document.getElementById('btn-start').disabled=false;document.getElementById('btn-lap').disabled=true;
+  document.getElementById('lap-list').style.display='none';document.getElementById('lap-items').innerHTML='';
+}
+initGroupBtns();
+</script>
+</body>
+</html>
