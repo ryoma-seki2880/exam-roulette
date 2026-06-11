@@ -417,8 +417,7 @@ const DB={
     4:[{n:'大川 穂花',g:'女'},{n:'河島 俊一',g:'男'},{n:'富永 虹',g:'男'},{n:'松﨑 桜和',g:'女'},{n:'森 天花',g:'女'}]
   }},
   '午後部':{'午後':{
-    1:[{n:'内田 凜海',g:'男'},{n:'綱 慧音',g:'男'},{n:'松本 悠菜',g:'女'}],
-    2:[{n:'青柳 彩楽',g:'女'},{n:'米須 鉄生',g:'男'},{n:'佐藤 克己',g:'男'}]
+    1:[{n:'青柳 彩楽',g:'女'},{n:'内田 凜海',g:'男'},{n:'綱 慧音',g:'男'},{n:'松本 悠菜',g:'女'},{n:'佐藤 克己',g:'男'}]
   }}
 };
 const EXAMS=[
@@ -459,7 +458,7 @@ function setMode(m){
 function initGroupBtns(){
   [{id:'grp-am1',bu:'午前部',kumi:1,groups:[1,2,3,4,5]},
    {id:'grp-am2',bu:'午前部',kumi:2,groups:[1,2,3,4]},
-   {id:'grp-pm', bu:'午後部',kumi:'午後',groups:[1,2]}
+   {id:'grp-pm', bu:'午後部',kumi:'午後',groups:[1]}
   ].forEach(({id,bu,kumi,groups})=>{
     const el=document.getElementById(id);
     groups.forEach(g=>{
