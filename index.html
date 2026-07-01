@@ -204,7 +204,7 @@
     .standby-row { display: none; align-items: center; gap: 8px; padding: 8px 12px; background: var(--color-background-secondary); border-radius: var(--border-radius-md); margin-bottom: 8px; }
     .sb-lbl { font-size: 10px; font-weight: 500; letter-spacing: .07em; text-transform: uppercase; color: var(--color-text-tertiary); white-space: nowrap; }
     .sb-names { font-size: 13px; color: var(--color-text-secondary); }
-    .action-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 7px; margin-top: 4px; }
+    .action-row { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 7px; margin-top: 4px; }
     .act-btn { padding: 11px 6px; border: .5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); font-size: 12px; color: var(--color-text-secondary); background: transparent; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; transition: background .15s; line-height: 1.2; text-align: center; font-family: var(--font-sans); }
     .act-btn i { font-size: 16px; }
     .act-btn:hover { background: var(--color-background-secondary); }
@@ -400,6 +400,7 @@
       <button class="act-btn" onclick="doSpin()"><i class="ti ti-refresh"></i>もう一度</button>
       <button class="act-btn" id="act-change-exam" onclick="goTo(4)"><i class="ti ti-edit"></i>課題を変える</button>
       <button class="act-btn" onclick="goTo(2)"><i class="ti ti-users"></i>術者を変える</button>
+      <button class="act-btn" onclick="goTo(1)"><i class="ti ti-replace"></i>グループを変える</button>
     </div>
   </div>
   <div class="card timer-card" id="timer-card">
@@ -706,7 +707,7 @@ function assignRoles(op,others){
   setTimeout(()=>{
     const ar=document.getElementById('action-row');
     ar.style.display='grid';
-    ar.style.gridTemplateColumns=examMode?'1fr 1fr':'1fr 1fr 1fr';
+    ar.style.gridTemplateColumns=examMode?'1fr 1fr 1fr':'1fr 1fr 1fr 1fr';
     document.getElementById('act-change-exam').style.display=examMode?'none':'flex';
     const sb=document.getElementById('spin-btn');sb.disabled=false;sb.innerHTML='<i class="ti ti-refresh"></i> もう一度';
     document.getElementById('timer-card').classList.add('visible');
