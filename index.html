@@ -70,6 +70,23 @@
     .mode-desc { font-size: 11px; color: var(--color-text-tertiary); line-height: 1.5; }
     .mode-card.sel .mode-desc { color: #185FA5; }
 
+    /* 試験モード */
+    .exam-mode-card { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: .9rem 1.1rem; margin-bottom: 1rem; background: var(--color-background-primary); border: .5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); transition: all .18s; }
+    .exam-mode-card.on { background: #FCEBEB; border-color: #E24B4A; }
+    .exam-mode-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .exam-mode-icon { font-size: 20px; color: var(--color-text-secondary); flex-shrink: 0; }
+    .exam-mode-card.on .exam-mode-icon { color: #A82B2A; }
+    .exam-mode-name { font-size: 14px; font-weight: 500; color: var(--color-text-primary); }
+    .exam-mode-card.on .exam-mode-name { color: #791F1F; }
+    .exam-mode-desc { font-size: 11px; color: var(--color-text-tertiary); line-height: 1.5; margin-top: 2px; }
+    .exam-mode-card.on .exam-mode-desc { color: #A82B2A; }
+    .switch { position: relative; width: 44px; height: 26px; flex-shrink: 0; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .switch .slider { position: absolute; inset: 0; cursor: pointer; background-color: var(--color-border-secondary); transition: .2s; border-radius: 100px; }
+    .switch .slider:before { content: ""; position: absolute; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: #fff; transition: .2s; border-radius: 50%; box-shadow: 0 1px 2px rgba(0,0,0,.25); }
+    .switch input:checked + .slider { background-color: #E24B4A; }
+    .switch input:checked + .slider:before { transform: translateX(18px); }
+
     /* グループ選択 */
     .bu-sec { margin-bottom: 12px; }
     .bu-title { font-size: 12px; font-weight: 500; color: var(--color-text-secondary); margin-bottom: 7px; }
@@ -233,9 +250,22 @@
 <div class="page active" id="page-1">
   <div class="hero">
     <div class="hero-title">実技試験 練習ルーレット</div>
-    <div class="hero-sub">グループから読み込むか、自由にメンバーを入力して始めよう</div>
+    <div class="hero-sub" id="hero-sub">グループから読み込むか、自由にメンバーを入力して始めよう</div>
   </div>
-  <div class="mode-grid">
+  <div class="exam-mode-card" id="exam-mode-card">
+    <div class="exam-mode-left">
+      <i class="ti ti-certificate exam-mode-icon"></i>
+      <div>
+        <div class="exam-mode-name">試験モード</div>
+        <div class="exam-mode-desc">班選択のみ・患者は男性優先固定・試験課題はランダムのみ</div>
+      </div>
+    </div>
+    <label class="switch">
+      <input type="checkbox" id="exam-mode-toggle" onchange="toggleExamMode(this.checked)">
+      <span class="slider"></span>
+    </label>
+  </div>
+  <div class="mode-grid" id="mode-grid">
     <div class="mode-card sel" id="mode-group" onclick="setMode('group')">
       <i class="ti ti-users mode-icon"></i>
       <span class="mode-name">グループから選ぶ</span>
@@ -287,8 +317,8 @@
     <div class="op-hint"><i class="ti ti-info-circle" style="font-size:15px;flex-shrink:0;margin-top:1px"></i>アプリを操作している人（術者）をタップ。欠席者は「出席」のチェックを外してください。</div>
     <div id="member-list"></div>
   </div>
-  <button class="primary-btn" id="next-2" onclick="goTo(3)" disabled>
-    <i class="ti ti-arrow-right"></i> 患者役の決め方を選ぶ
+  <button class="primary-btn" id="next-2" onclick="afterOperatorSelected()" disabled>
+    <i class="ti ti-arrow-right"></i> <span id="next2-label">患者役の決め方を選ぶ</span>
   </button>
 </div>
 
@@ -368,7 +398,7 @@
     </div>
     <div class="action-row" id="action-row" style="display:none">
       <button class="act-btn" onclick="doSpin()"><i class="ti ti-refresh"></i>もう一度</button>
-      <button class="act-btn" onclick="goTo(4)"><i class="ti ti-edit"></i>課題を変える</button>
+      <button class="act-btn" id="act-change-exam" onclick="goTo(4)"><i class="ti ti-edit"></i>課題を変える</button>
       <button class="act-btn" onclick="goTo(2)"><i class="ti ti-users"></i>術者を変える</button>
     </div>
   </div>
@@ -429,7 +459,26 @@ const MIN=4;
 let inputMode='group',curGroup=null,members=[],operatorIdx=null;
 let patientMode=null,selExam=null,isSpinning=false;
 let freeMembers=[],freeId=0;
+let examMode=false;
 
+function toggleExamMode(checked){
+  examMode=checked;
+  document.getElementById('exam-mode-card').className='exam-mode-card'+(examMode?' on':'');
+  document.getElementById('mode-grid').style.display=examMode?'none':'grid';
+  document.getElementById('hero-sub').textContent=examMode
+    ?'試験モード：班を選択してください（患者は男性優先／課題はランダムに固定されます）'
+    :'グループから読み込むか、自由にメンバーを入力して始めよう';
+  if(examMode)setMode('group');
+}
+function afterOperatorSelected(){
+  if(examMode){
+    patientMode='male';
+    selExam=EXAMS.findIndex(e=>e.rnd);
+    goTo(5);
+  }else{
+    goTo(3);
+  }
+}
 function goTo(n){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+n).classList.add('active');
@@ -439,7 +488,7 @@ function goTo(n){
   if(n===4)initP4();
   if(n===5)initP5();
 }
-function goBackP5(){resetTimer();goTo(4);}
+function goBackP5(){resetTimer();goTo(examMode?2:4);}
 
 function setMode(m){
   inputMode=m;
@@ -518,6 +567,7 @@ function updateFreeState(){
 }
 function setupMembers(){
   operatorIdx=null;
+  document.getElementById('next2-label').textContent=examMode?'抽選する':'患者役の決め方を選ぶ';
   if(inputMode==='group'){
     const {bu,kumi,grp}=curGroup;const kl=kumi==='午後'?'':`${kumi}組 `;
     members=DB[bu][kumi][grp].map((s,i)=>({name:s.n,gender:s.g,absent:false,idx:i}));
@@ -654,7 +704,10 @@ function assignRoles(op,others){
   setTimeout(()=>setCard('a2',a2,'助手2'),440);
   if(standby.length>0)setTimeout(()=>{document.getElementById('standby-row').style.display='flex';document.getElementById('standby-names').textContent=standby.map(s=>s.name).join('、');},560);
   setTimeout(()=>{
-    document.getElementById('action-row').style.display='grid';
+    const ar=document.getElementById('action-row');
+    ar.style.display='grid';
+    ar.style.gridTemplateColumns=examMode?'1fr 1fr':'1fr 1fr 1fr';
+    document.getElementById('act-change-exam').style.display=examMode?'none':'flex';
     const sb=document.getElementById('spin-btn');sb.disabled=false;sb.innerHTML='<i class="ti ti-refresh"></i> もう一度';
     document.getElementById('timer-card').classList.add('visible');
   },650);
