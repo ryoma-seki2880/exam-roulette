@@ -139,42 +139,25 @@
     .absent-lbl { font-size: 11px; color: var(--color-text-tertiary); }
     .op-hint { font-size: 12px; color: var(--color-text-secondary); background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 9px 12px; margin-bottom: 10px; display: flex; align-items: flex-start; gap: 7px; line-height: 1.5; }
 
-    /* PAGE3: 患者役モード */
-    .patient-mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1rem; }
-    .pm-card { padding: 1.1rem 1rem; border-radius: var(--border-radius-lg); border: .5px solid var(--color-border-tertiary); background: var(--color-background-secondary); cursor: pointer; transition: all .18s; display: flex; flex-direction: column; align-items: center; gap: 7px; text-align: center; }
-    .pm-card:hover { border-color: var(--color-border-primary); background: var(--color-background-primary); }
-    .pm-card.sel-random { background: #EAF3DE; border-color: #639922; }
-    .pm-card.sel-male { background: #FAEEDA; border-color: #BA7517; }
-    .pm-icon { font-size: 22px; color: var(--color-text-secondary); }
-    .pm-card.sel-random .pm-icon { color: #3B6D11; }
-    .pm-card.sel-male .pm-icon { color: #854F0B; }
-    .pm-name { font-size: 13px; font-weight: 500; color: var(--color-text-secondary); }
-    .pm-card.sel-random .pm-name { color: #3B6D11; }
-    .pm-card.sel-male .pm-name { color: #633806; }
-    .pm-desc { font-size: 11px; color: var(--color-text-tertiary); line-height: 1.5; }
-    .pm-card.sel-random .pm-desc { color: #3B6D11; }
-    .pm-card.sel-male .pm-desc { color: #854F0B; }
+    /* 患者役の自動判定タグ用ノート */
     .pm-note { font-size: 11px; color: var(--color-text-secondary); line-height: 1.6; padding: 8px 12px; background: var(--color-background-secondary); border-radius: var(--border-radius-md); }
 
-    /* PAGE4: 試験課題 */
+    /* PAGE3: 試験課題 */
     .exam-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
     .exam-card { padding: 12px 13px; border-radius: var(--border-radius-md); border: .5px solid var(--color-border-tertiary); background: var(--color-background-secondary); cursor: pointer; transition: all .15s; display: flex; align-items: center; justify-content: space-between; gap: 6px; }
     .exam-card:hover { border-color: var(--color-border-primary); }
     .exam-card.sel { background: #E6F1FB; border-color: #378ADD; }
     .exam-card.rnd { grid-column: 1/-1; }
     .exam-card.rnd.sel { background: #EAF3DE; border-color: #639922; }
+    .exam-card-main { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
     .exam-name { font-size: 13px; font-weight: 500; color: var(--color-text-secondary); line-height: 1.4; }
     .exam-card.sel .exam-name { color: #0C447C; }
     .exam-card.rnd.sel .exam-name { color: #3B6D11; }
-    .patient-mode-bar { display: flex; align-items: center; justify-content: space-between; padding: 9px 12px; border-radius: var(--border-radius-md); border: .5px solid var(--color-border-tertiary); background: var(--color-background-secondary); margin-top: 10px; }
-    .pmb-label { font-size: 12px; color: var(--color-text-secondary); }
-    .pmb-value { font-size: 12px; font-weight: 500; padding: 3px 10px; border-radius: 100px; }
-    .pmb-random { background: #EAF3DE; color: #3B6D11; border: .5px solid #639922; }
-    .pmb-male { background: #FAEEDA; color: #633806; border: .5px solid #BA7517; }
-    .pmb-change { font-size: 11px; color: var(--color-text-tertiary); cursor: pointer; text-decoration: underline; text-underline-offset: 2px; background: none; border: none; cursor: pointer; font-family: var(--font-sans); }
-    .pmb-change:hover { color: var(--color-text-secondary); }
+    .exam-tag { font-size: 9.5px; font-weight: 500; padding: 2px 7px; border-radius: 100px; align-self: flex-start; white-space: nowrap; }
+    .exam-tag.tag-male { background: #FAEEDA; color: #854F0B; border: .5px solid #BA7517; }
+    .exam-tag.tag-any { background: var(--color-background-tertiary); color: var(--color-text-tertiary); border: .5px solid var(--color-border-tertiary); }
 
-    /* PAGE5: ルーレット＋結果 */
+    /* PAGE4: ルーレット＋結果 */
     .roulette-box { background: var(--color-background-secondary); border: .5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.75rem 1.25rem; text-align: center; margin-bottom: 1rem; }
     .rl-lbl { font-size: 10px; font-weight: 500; letter-spacing: .09em; text-transform: uppercase; color: var(--color-text-secondary); margin-bottom: .6rem; }
     .rl-text { font-size: 23px; font-weight: 500; min-height: 36px; letter-spacing: -.02em; color: var(--color-text-tertiary); transition: color .08s; }
@@ -257,7 +240,7 @@
       <i class="ti ti-certificate exam-mode-icon"></i>
       <div>
         <div class="exam-mode-name">試験モード</div>
-        <div class="exam-mode-desc">班選択のみ・患者は男性優先固定・試験課題はランダムのみ</div>
+        <div class="exam-mode-desc">班選択のみ・試験課題はランダムのみ（患者役は課題に応じて自動決定）</div>
       </div>
     </div>
     <label class="switch">
@@ -318,7 +301,7 @@
     <div id="member-list"></div>
   </div>
   <button class="primary-btn" id="next-2" onclick="afterOperatorSelected()" disabled>
-    <i class="ti ti-arrow-right"></i> <span id="next2-label">患者役の決め方を選ぶ</span>
+    <i class="ti ti-arrow-right"></i> <span id="next2-label">試験課題を選ぶ</span>
   </button>
 </div>
 
@@ -326,56 +309,25 @@
 <div class="page" id="page-3">
   <div class="step-header">
     <button class="back-btn" onclick="goTo(2)"><i class="ti ti-arrow-left"></i></button>
-    <div><div class="step-title">患者役の決め方</div><div class="step-sub" id="p3-sub"></div></div>
+    <div><div class="step-title">試験課題を選ぶ</div><div class="step-sub" id="p3-sub"></div></div>
   </div>
   <div class="card">
-    <div class="sec-label" style="margin-bottom:12px">患者役をどのように決めますか？</div>
-    <div class="patient-mode-grid">
-      <div class="pm-card" id="pm-random" onclick="selectPatientMode('random')">
-        <i class="ti ti-arrows-shuffle pm-icon"></i>
-        <span class="pm-name">完全ランダム</span>
-        <span class="pm-desc">性別に関係なく<br>ランダムに決定</span>
-      </div>
-      <div class="pm-card" id="pm-male" onclick="selectPatientMode('male')">
-        <i class="ti ti-user pm-icon"></i>
-        <span class="pm-name">男性優先</span>
-        <span class="pm-desc">患者役を<br>男性から選ぶ</span>
-      </div>
-    </div>
-    <div class="pm-note">
+    <div class="exam-grid" id="exam-grid"></div>
+    <div class="pm-note" style="margin-top:10px">
       <i class="ti ti-info-circle" style="font-size:13px;vertical-align:-2px"></i>
-      　男性優先モードは試験課題に関わらず常に適用されます。試験課題ごとに切り替えたい場合は、都度この画面で変更してください。
+      　患者役は試験課題に応じて自動的に決まります。肋骨骨折固定・鎖骨骨折固定・上腕骨骨幹部骨折は男性優先、それ以外は男女ランダムです。
     </div>
   </div>
   <button class="primary-btn" id="next-3" onclick="goTo(4)" disabled>
-    <i class="ti ti-arrow-right"></i> 試験課題を選ぶ
+    <i class="ti ti-player-play"></i> 抽選する
   </button>
 </div>
 
 <!-- PAGE 4 -->
 <div class="page" id="page-4">
   <div class="step-header">
-    <button class="back-btn" onclick="goTo(3)"><i class="ti ti-arrow-left"></i></button>
-    <div><div class="step-title">試験課題を選ぶ</div><div class="step-sub" id="p4-sub"></div></div>
-  </div>
-  <div class="card">
-    <div class="exam-grid" id="exam-grid"></div>
-    <div class="patient-mode-bar">
-      <span class="pmb-label">患者役の決め方</span>
-      <span class="pmb-value" id="pmbar-value"></span>
-      <button class="pmb-change" onclick="goTo(3)">変更</button>
-    </div>
-  </div>
-  <button class="primary-btn" id="next-4" onclick="goTo(5)" disabled>
-    <i class="ti ti-player-play"></i> 抽選する
-  </button>
-</div>
-
-<!-- PAGE 5 -->
-<div class="page" id="page-5">
-  <div class="step-header">
-    <button class="back-btn" onclick="goBackP5()"><i class="ti ti-arrow-left"></i></button>
-    <div><div class="step-title" id="p5-title">抽選</div><div class="step-sub" id="p5-sub"></div></div>
+    <button class="back-btn" onclick="goBackP4()"><i class="ti ti-arrow-left"></i></button>
+    <div><div class="step-title" id="p4-title">抽選</div><div class="step-sub" id="p4-sub"></div></div>
   </div>
   <div class="card">
     <div class="roulette-box">
@@ -398,7 +350,7 @@
     </div>
     <div class="action-row" id="action-row" style="display:none">
       <button class="act-btn" onclick="doSpin()"><i class="ti ti-refresh"></i>もう一度</button>
-      <button class="act-btn" id="act-change-exam" onclick="goTo(4)"><i class="ti ti-edit"></i>課題を変える</button>
+      <button class="act-btn" id="act-change-exam" onclick="goTo(3)"><i class="ti ti-edit"></i>課題を変える</button>
       <button class="act-btn" onclick="goTo(2)"><i class="ti ti-users"></i>術者を変える</button>
       <button class="act-btn" onclick="goTo(1)"><i class="ti ti-replace"></i>グループを変える</button>
     </div>
@@ -452,13 +404,13 @@ const DB={
   }}
 };
 const EXAMS=[
-  {name:'第5中手骨頸部骨折固定'},{name:'肋骨骨折固定'},{name:'下腿骨骨幹部骨折固定'},
-  {name:'コーレス骨折固定'},{name:'上腕骨骨幹部骨折'},{name:'鎖骨骨折固定'},
+  {name:'第5中手骨頸部骨折固定'},{name:'肋骨骨折固定',maleOnly:true},{name:'下腿骨骨幹部骨折固定'},
+  {name:'コーレス骨折固定'},{name:'上腕骨骨幹部骨折',maleOnly:true},{name:'鎖骨骨折固定',maleOnly:true},
   {name:'おまかせ（ランダム）',rnd:true},
 ];
 const MIN=4;
 let inputMode='group',curGroup=null,members=[],operatorIdx=null;
-let patientMode=null,selExam=null,isSpinning=false;
+let selExam=null,isSpinning=false;
 let freeMembers=[],freeId=0;
 let examMode=false;
 
@@ -467,15 +419,14 @@ function toggleExamMode(checked){
   document.getElementById('exam-mode-card').className='exam-mode-card'+(examMode?' on':'');
   document.getElementById('mode-grid').style.display=examMode?'none':'grid';
   document.getElementById('hero-sub').textContent=examMode
-    ?'試験モード：班を選択してください（患者は男性優先／課題はランダムに固定されます）'
+    ?'試験モード：班を選択してください（試験課題はランダムに決定され、患者役は課題に応じて自動で決まります）'
     :'グループから読み込むか、自由にメンバーを入力して始めよう';
   if(examMode)setMode('group');
 }
 function afterOperatorSelected(){
   if(examMode){
-    patientMode='male';
     selExam=EXAMS.findIndex(e=>e.rnd);
-    goTo(5);
+    goTo(4);
   }else{
     goTo(3);
   }
@@ -487,9 +438,8 @@ function goTo(n){
   if(n===2)setupMembers();
   if(n===3)initP3();
   if(n===4)initP4();
-  if(n===5)initP5();
 }
-function goBackP5(){resetTimer();goTo(examMode?2:4);}
+function goBackP4(){resetTimer();goTo(examMode?2:3);}
 
 function setMode(m){
   inputMode=m;
@@ -568,7 +518,7 @@ function updateFreeState(){
 }
 function setupMembers(){
   operatorIdx=null;
-  document.getElementById('next2-label').textContent=examMode?'抽選する':'患者役の決め方を選ぶ';
+  document.getElementById('next2-label').textContent=examMode?'抽選する':'試験課題を選ぶ';
   if(inputMode==='group'){
     const {bu,kumi,grp}=curGroup;const kl=kumi==='午後'?'':`${kumi}組 `;
     members=DB[bu][kumi][grp].map((s,i)=>({name:s.n,gender:s.g,absent:false,idx:i}));
@@ -615,46 +565,31 @@ function toggleAbsent(i,absent){
   if(operatorIdx!==null&&!members[operatorIdx].absent)selectOperator(operatorIdx);
 }
 function initP3(){
-  document.getElementById('p3-sub').textContent=`術者：${members[operatorIdx].name}`;
-  renderPatientModeCards();
-  document.getElementById('next-3').disabled=patientMode===null;
-}
-function selectPatientMode(m){
-  patientMode=m;renderPatientModeCards();
-  document.getElementById('next-3').disabled=false;
-}
-function renderPatientModeCards(){
-  document.getElementById('pm-random').className='pm-card'+(patientMode==='random'?' sel-random':'');
-  document.getElementById('pm-male').className='pm-card'+(patientMode==='male'?' sel-male':'');
-}
-function initP4(){
   selExam=null;
-  document.getElementById('p4-sub').textContent=`術者：${members[operatorIdx].name}`;
-  const bar=document.getElementById('pmbar-value');
-  if(patientMode==='male'){bar.className='pmb-value pmb-male';bar.textContent='男性優先';}
-  else{bar.className='pmb-value pmb-random';bar.textContent='完全ランダム';}
+  document.getElementById('p3-sub').textContent=`術者：${members[operatorIdx].name}`;
   const grid=document.getElementById('exam-grid');grid.innerHTML='';
   EXAMS.forEach((e,i)=>{
     const isR=!!e.rnd;
+    const tag=isR?'':(e.maleOnly?'<span class="exam-tag tag-male">男性優先</span>':'<span class="exam-tag tag-any">男女ランダム</span>');
     const card=document.createElement('div');card.className='exam-card'+(isR?' rnd':'');
-    card.innerHTML=`<span class="exam-name">${e.name}</span>${isR?'<i class="ti ti-dice" style="font-size:14px;color:var(--color-text-tertiary);opacity:.5;flex-shrink:0"></i>':''}`;
+    card.innerHTML=`<div class="exam-card-main"><span class="exam-name">${e.name}</span>${tag}</div>${isR?'<i class="ti ti-dice" style="font-size:14px;color:var(--color-text-tertiary);opacity:.5;flex-shrink:0"></i>':''}`;
     card.onclick=()=>selectExam(i);
     grid.appendChild(card);
   });
-  document.getElementById('next-4').disabled=true;
+  document.getElementById('next-3').disabled=true;
 }
 function selectExam(i){
   selExam=i;
   document.querySelectorAll('.exam-card').forEach((c,idx)=>{
     const e=EXAMS[idx];c.className='exam-card'+(e.rnd?' rnd':'')+(idx===i?' sel'+(e.rnd?' rnd':''):'');
   });
-  document.getElementById('next-4').disabled=false;
+  document.getElementById('next-3').disabled=false;
 }
-function initP5(){
+function initP4(){
   isSpinning=false;resetTimer();
   const op=members[operatorIdx];
-  document.getElementById('p5-title').textContent='抽選';
-  document.getElementById('p5-sub').textContent=`術者：${op.name} ／ ${patientMode==='male'?'患者：男性優先':'患者：完全ランダム'}`;
+  document.getElementById('p4-title').textContent='抽選';
+  document.getElementById('p4-sub').textContent=`術者：${op.name}`;
   document.getElementById('rl-text').textContent='—';document.getElementById('rl-text').className='rl-text';
   document.getElementById('role-grid').style.display='none';document.getElementById('roles-label').style.display='none';
   document.getElementById('standby-row').style.display='none';document.getElementById('action-row').style.display='none';
@@ -685,14 +620,15 @@ async function doSpin(){
     await sleep(Math.round(delay));
   }
   disp.textContent=final.name;disp.className='rl-text done';
-  document.getElementById('p5-title').textContent=final.name;
+  document.getElementById('p4-title').textContent=final.name;
+  document.getElementById('p4-sub').textContent=`術者：${members[operatorIdx].name} ／ ${final.maleOnly?'患者：男性優先':'患者：完全ランダム'}`;
   await sleep(500);
   const others=members.filter(s=>!s.absent&&s.idx!==operatorIdx);
-  assignRoles(members[operatorIdx],others);isSpinning=false;
+  assignRoles(members[operatorIdx],others,!!final.maleOnly);isSpinning=false;
 }
-function assignRoles(op,others){
+function assignRoles(op,others,maleOnly){
   let patient,a1,a2,standby=[];
-  if(patientMode==='male'){
+  if(maleOnly){
     const males=shuffle(others.filter(s=>s.gender==='男'));
     const females=shuffle(others.filter(s=>s.gender==='女'));
     if(males.length>0){patient=males[0];const rest=shuffle([...males.slice(1),...females]);a1=rest[0];a2=rest[1];standby=rest.slice(2);}
