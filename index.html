@@ -599,6 +599,19 @@ function initP4(){
 }
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+let examBag=[],lastExamName=null;
+function drawExam(){
+  if(examBag.length===0){
+    examBag=shuffle(EXAMS.filter(e=>!e.rnd));
+    if(examBag.length>1&&examBag[examBag.length-1].name===lastExamName){
+      const swapIdx=Math.floor(Math.random()*(examBag.length-1));
+      [examBag[examBag.length-1],examBag[swapIdx]]=[examBag[swapIdx],examBag[examBag.length-1]];
+    }
+  }
+  const picked=examBag.pop();
+  lastExamName=picked.name;
+  return picked;
+}
 async function doSpin(){
   if(isSpinning)return;
   isSpinning=true;resetTimer();
@@ -608,8 +621,7 @@ async function doSpin(){
   document.getElementById('roles-label').style.display='none';document.getElementById('standby-row').style.display='none';
   setCard('p',null);setCard('a1',null);setCard('a2',null);setCard('o',members[operatorIdx],'術者');
   const exam=EXAMS[selExam];
-  const pool=EXAMS.filter(e=>!e.rnd);
-  const final=exam.rnd?pool[Math.floor(Math.random()*pool.length)]:exam;
+  const final=exam.rnd?drawExam():exam;
   const disp=document.getElementById('rl-text');
   const names=EXAMS.filter(e=>!e.rnd).map(e=>e.name);
   const total=22+Math.floor(Math.random()*10);let delay=50;
